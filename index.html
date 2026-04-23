@@ -316,7 +316,7 @@
         {title:'Section A', rows:[['PPE and H2S Card', d.radios.a1 || '-'],['Access and Documents Verified', d.radios.a2 || '-'],['Crew Leader Contacted Before Mobilization', d.radios.a3 || '-'],['Reason if No', d.reasonA || '-']]},
         {title:'Section B', rows:[['Arrival Time', d.arrivalTime || '-'],['Crew Leader Notified Upon Arrival', d.radios.b2 || '-']]},
         {title:'Section C', rows:[['Tools, Equipment, and Personal Tools Available', d.radios.c1 || '-'],['MLE Cable Checked', d.radios.c2_mle || '-'],['MLE Cable Size', d.c2_mle_size || '-'],['Main Cable Checked', d.radios.c2_main || '-'],['Main Cable Size', d.c2_main_size || '-'],['Landing Lead Available', d.radios.c3 || '-'],['Packer Inspection and Measurement', d.radios.c4 || '-'],['Does the Work Include a Packer? (PKR)', d.radios.c8_pkr || '-'],['Hanger Inspection', d.radios.c5 || '-'],['Christmas Tree and Bonnet Inspection', d.radios.c6 || '-'],['Casing Size Verification', d.radios.c7 || '-'],['System Type', d.systemType || '-'],['Backup Kit Available', d.radios.c9 || '-'],['Crew Leader Notified That the Job Is Ready', d.radios.c10 || '-'],['Remarks', d.remarksC || '-']]},
-        {title:'Report Information', rows:[['Report Generated On', formatGeneratedTimestamp(generatedAt)]]}
+        {title:'Report Information (Auto Generated)', rows:[['Report Generated On', formatGeneratedTimestamp(generatedAt)]]}
       ];
     }
 
@@ -328,7 +328,7 @@
       const navy = '0.14 0.20 0.28', gold = '0.78 0.60 0.17', text = '0.12 0.16 0.20', muted = '0.39 0.45 0.54', white = '1 1 1';
       let y = imgY - 14;
       const content = [];
-      const valueX = margin + 200;
+      const valueX = margin + 240;
 
       function rect(x,yPos,w,h,color){ content.push(`${color} rg`); content.push(`${x.toFixed(2)} ${yPos.toFixed(2)} ${w.toFixed(2)} ${h.toFixed(2)} re f`); }
       function line(x1,y1,x2,y2,width,color){ content.push(`${color} RG`); content.push(`${width} w`); content.push(`${x1.toFixed(2)} ${y1.toFixed(2)} m`); content.push(`${x2.toFixed(2)} ${y2.toFixed(2)} l S`); }
@@ -388,12 +388,15 @@
 
     async function generateAndSharePdf(){
       setBusy(true); setStatus('Preparing PDF...');
+
+const isAndroid = /Android/i.test(navigator.userAgent);
+
       try {
         const generatedAt = new Date();
         const blob = createStyledPdfBlob(generatedAt);
         if (!blob || !blob.size) throw new Error('EMPTY_PDF');
         const file = new File([blob], 'BIW_ITT_Checklist_Summary.pdf', {type:'application/pdf'});
-        if (navigator.share && typeof navigator.canShare === 'function' && navigator.canShare({files:[file]})) {
+        if (!isAndroid && navigator.share && typeof navigator.canShare === 'function' && navigator.canShare({files:[file]})) {
           await navigator.share({files:[file], title:'BIW ITT Checklist Summary', text:'BIW ITT checklist PDF'});
           setStatus('PDF shared successfully.');
         } else {
