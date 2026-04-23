@@ -16,42 +16,17 @@
       --muted:#6e7468;
       --yes:#1f7a3d;
       --no:#b42318;
-      --soft:#f9f7f2;
     }
-
     *{box-sizing:border-box}
-    html,body{
-      margin:0;
-      padding:0;
-      background:var(--bg);
-      color:var(--text);
-      font-family:Arial,Helvetica,sans-serif;
-    }
-
-    body{
-      min-height:100vh;
-      position:relative;
-      overflow-x:hidden;
-    }
-
-    /* Embedded decorative watermark/image so it never disappears */
+    html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:Arial,Helvetica,sans-serif}
+    body{min-height:100vh;position:relative;overflow-x:hidden}
     body::before{
       content:"";
-      position:fixed;
-      inset:0;
-      pointer-events:none;
-      opacity:.08;
-      background-repeat:no-repeat;
-      background-position:center 140px;
-      background-size:min(680px, 92vw) auto;
+      position:fixed; inset:0; pointer-events:none; opacity:.08;
+      background-repeat:no-repeat; background-position:center 140px; background-size:min(680px,92vw) auto;
       background-image:url("data:image/svg+xml;utf8,\
 <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 700'>\
-<defs>\
-<linearGradient id='g' x1='0' x2='1' y1='0' y2='1'>\
-<stop offset='0%' stop-color='%236f7b5c'/>\
-<stop offset='100%' stop-color='%23b89b5e'/>\
-</linearGradient>\
-</defs>\
+<defs><linearGradient id='g' x1='0' x2='1' y1='0' y2='1'><stop offset='0%' stop-color='%236f7b5c'/><stop offset='100%' stop-color='%23b89b5e'/></linearGradient></defs>\
 <path d='M0 460 C110 425 190 390 270 390 C365 390 435 450 545 450 C640 450 710 380 805 380 C930 380 1030 460 1200 510 L1200 700 L0 700 Z' fill='url(%23g)'/>\
 <path d='M470 350 L615 238 L760 350 L703 350 L703 430 L527 430 L527 350 Z' fill='%238a9575'/>\
 <rect x='575' y='304' width='36' height='126' fill='%23f6f3ed'/>\
@@ -59,278 +34,65 @@
 <circle cx='1019' cy='223' r='18' fill='%23b89b5e'/>\
 </svg>");
     }
-
-    .wrap{
-      width:min(1120px, calc(100% - 24px));
-      margin:18px auto 40px;
-      position:relative;
-      z-index:1;
-    }
-
-    .app{
-      background:rgba(255,255,255,.97);
-      border:1px solid var(--line);
-      border-radius:22px;
-      box-shadow:0 18px 45px rgba(47,53,44,.10);
-      overflow:hidden;
-      backdrop-filter: blur(6px);
-    }
-
-    .hero{
-      padding:22px 22px 18px;
-      background:
-        linear-gradient(135deg, rgba(111,123,92,.96), rgba(138,149,117,.96)),
-        linear-gradient(135deg, #6f7b5c, #8a9575);
-      color:#fff;
-      position:relative;
-    }
-
-    .hero::after{
-      content:"";
-      position:absolute;
-      right:-50px;
-      top:-40px;
-      width:230px;
-      height:230px;
-      border-radius:50%;
-      background:radial-gradient(circle, rgba(255,255,255,.18), transparent 65%);
-    }
-
-    .hero h1{
-      margin:0;
-      font-size:25px;
-      line-height:1.35;
-      position:relative;
-      z-index:1;
-    }
-
-    .hero p{
-      margin:8px 0 0;
-      font-size:14px;
-      line-height:1.7;
-      max-width:850px;
-      color:rgba(255,255,255,.94);
-      position:relative;
-      z-index:1;
-    }
-
-    .content{
-      padding:18px;
-      background:transparent;
-    }
-
-    .section{
-      margin-top:16px;
-      border:1px solid var(--line);
-      border-radius:18px;
-      overflow:hidden;
-      background:rgba(255,255,255,.95);
-    }
-
+    .wrap{width:min(1120px,calc(100% - 24px));margin:18px auto 40px;position:relative;z-index:1}
+    .app{background:rgba(255,255,255,.97);border:1px solid var(--line);border-radius:22px;box-shadow:0 18px 45px rgba(47,53,44,.10);overflow:hidden}
+    .hero{padding:22px 22px 18px;background:linear-gradient(135deg,rgba(111,123,92,.96),rgba(138,149,117,.96));color:#fff}
+    .hero h1{margin:0;font-size:25px;line-height:1.35}
+    .hero p{margin:8px 0 0;font-size:14px;line-height:1.7;max-width:850px;color:rgba(255,255,255,.94)}
+    .content{padding:18px}
+    .section{margin-top:16px;border:1px solid var(--line);border-radius:18px;overflow:hidden;background:rgba(255,255,255,.95)}
     .section:first-child{margin-top:0}
-
-    .section-title{
-      padding:12px 16px;
-      background:linear-gradient(90deg, var(--primary), var(--primary-2));
-      color:#fff;
-      font-weight:700;
-      font-size:18px;
-      letter-spacing:.2px;
+    .section-title{padding:12px 16px;background:linear-gradient(90deg,var(--primary),var(--primary-2));color:#fff;font-weight:700;font-size:18px}
+    .section-body{padding:16px;background:linear-gradient(180deg,#fff 0%,#fcfbf8 100%)}
+    .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+    .field{display:flex;flex-direction:column;gap:8px}
+    .field label{font-size:15px;font-weight:700;color:#394035}
+    .field input[type="text"], .field input[type="date"], .field select, .field textarea{
+      width:100%; min-height:48px; border:1.5px solid #d6d0c5; border-radius:13px; padding:12px 14px; font-size:15px; background:#fff; color:var(--text); outline:none;
     }
-
-    .section-body{
-      padding:16px;
-      background:linear-gradient(180deg,#fff 0%, #fcfbf8 100%);
-    }
-
-    .grid-2{
-      display:grid;
-      grid-template-columns:1fr 1fr;
-      gap:14px;
-    }
-
-    .field{
-      display:flex;
-      flex-direction:column;
-      gap:8px;
-    }
-
-    .field label{
-      font-size:15px;
-      font-weight:700;
-      color:#394035;
-    }
-
-    .field input[type="text"],
-    .field input[type="date"],
-    .field select,
-    .field textarea{
-      width:100%;
-      min-height:48px;
-      border:1.5px solid #d6d0c5;
-      border-radius:13px;
-      padding:12px 14px;
-      font-size:15px;
-      background:#fff;
-      color:var(--text);
-      outline:none;
-      transition:.15s ease;
-    }
-
-    .field textarea{
-      min-height:95px;
-      resize:vertical;
-    }
-
-    .field input:focus,
-    .field select:focus,
-    .field textarea:focus{
-      border-color:var(--primary);
-      box-shadow:0 0 0 4px rgba(111,123,92,.12);
-    }
-
-    .hint{
-      background:#fbfaf6;
-      border:1px solid #e2dbcf;
-      color:#40473b;
-      border-radius:14px;
-      padding:12px 14px;
-      line-height:1.75;
-      font-size:14px;
-      margin-bottom:14px;
-    }
-
-    .check-item{
-      margin-top:12px;
-      border:1px solid #ebe5da;
-      border-radius:15px;
-      background:#fff;
-      padding:14px;
-    }
-
-    .item-title{
-      font-size:15px;
-      font-weight:700;
-      line-height:1.6;
-      margin-bottom:10px;
-      color:#333a31;
-    }
-
-    .options{
-      display:flex;
-      flex-wrap:wrap;
-      gap:14px 18px;
-      align-items:center;
-    }
-
-    .option{
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
-      font-size:14px;
-      font-weight:700;
-      color:#495144;
-      background:#faf8f4;
-      border:1px solid #ece5d9;
-      padding:9px 12px;
-      border-radius:999px;
-    }
-
-    .option input{
-      accent-color:var(--primary);
-      transform:translateY(1px);
-    }
-
-    .subgrid{
-      display:grid;
-      grid-template-columns:1fr 1fr;
-      gap:12px;
-      margin-top:10px;
-    }
-
-    .sub-card{
-      border:1px dashed #d8d0c2;
-      border-radius:14px;
-      padding:12px;
-      background:#fcfbf8;
-    }
-
-    .sub-title{
-      margin-bottom:8px;
-      font-weight:700;
-      color:#46503f;
-    }
-
-    .actions{
-      display:flex;
-      flex-wrap:wrap;
-      gap:12px;
-      justify-content:center;
-      padding:18px 18px 24px;
-      border-top:1px solid var(--line);
-      background:linear-gradient(180deg,#fff 0%, #faf8f3 100%);
-    }
-
-    .btn{
-      border:none;
-      border-radius:13px;
-      padding:13px 18px;
-      font-size:15px;
-      font-weight:700;
-      cursor:pointer;
-      min-width:210px;
-    }
-
-    .btn-primary{
-      background:linear-gradient(90deg, var(--primary), var(--primary-2));
-      color:#fff;
-    }
-
-    .btn-secondary{
-      background:#f2ede3;
-      color:var(--primary);
-      border:1px solid #ddd3bf;
-    }
-
-    .status{
-      text-align:center;
-      padding:0 20px 22px;
-      min-height:20px;
-      font-size:14px;
-      color:var(--muted);
-    }
-
-    .help{
-      width:min(1120px, calc(100% - 24px));
-      margin:0 auto 24px;
-      color:#5a6154;
-      font-size:13px;
-      line-height:1.7;
-      text-align:center;
-    }
-
-    .hidden{
-      display:none !important;
-    }
-
-    @media (max-width: 860px){
+    .field textarea{min-height:95px;resize:vertical}
+    .field input:focus, .field select:focus, .field textarea:focus{border-color:var(--primary);box-shadow:0 0 0 4px rgba(111,123,92,.12)}
+    .hint{background:#fbfaf6;border:1px solid #e2dbcf;color:#40473b;border-radius:14px;padding:12px 14px;line-height:1.75;font-size:14px;margin-bottom:14px}
+    .check-item{margin-top:12px;border:1px solid #ebe5da;border-radius:15px;background:#fff;padding:14px}
+    .item-title{font-size:15px;font-weight:700;line-height:1.6;margin-bottom:10px;color:#333a31}
+    .options{display:flex;flex-wrap:wrap;gap:14px 18px;align-items:center}
+    .option{display:inline-flex;align-items:center;gap:8px;font-size:14px;font-weight:700;color:#495144;background:#faf8f4;border:1px solid #ece5d9;padding:9px 12px;border-radius:999px}
+    .option input{accent-color:var(--primary)}
+    .subgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:10px}
+    .sub-card{border:1px dashed #d8d0c2;border-radius:14px;padding:12px;background:#fcfbf8}
+    .sub-title{margin-bottom:8px;font-weight:700;color:#46503f}
+    .actions{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;padding:18px 18px 24px;border-top:1px solid var(--line);background:linear-gradient(180deg,#fff 0%,#faf8f3 100%)}
+    .btn{border:none;border-radius:13px;padding:13px 18px;font-size:15px;font-weight:700;cursor:pointer;min-width:210px}
+    .btn-primary{background:linear-gradient(90deg,var(--primary),var(--primary-2));color:#fff}
+    .btn-secondary{background:#f2ede3;color:var(--primary);border:1px solid #ddd3bf}
+    .status{text-align:center;padding:0 20px 22px;min-height:20px;font-size:14px;color:var(--muted)}
+    .help{width:min(1120px,calc(100% - 24px));margin:0 auto 24px;color:#5a6154;font-size:13px;line-height:1.7;text-align:center}
+    #printSheet{display:none;background:#fff;color:#2f352c}
+    #printSheet .page{position:relative;min-height:100vh;padding:18mm 14mm 14mm;background:#fff}
+    #printSheet .watermark{position:absolute;top:90px;left:0;right:0;text-align:center;opacity:.08;pointer-events:none}
+    #printSheet .watermark svg{width:78%;max-width:560px;height:auto}
+    #printSheet .header{position:relative;z-index:1;background:linear-gradient(90deg,#6f7b5c,#8a9575);color:#fff;padding:16px 18px;border-radius:14px}
+    #printSheet .header h1{margin:0;font-size:24px;line-height:1.3}
+    #printSheet .header p{margin:8px 0 0;font-size:13px;line-height:1.6;color:rgba(255,255,255,.95)}
+    #printSheet .psection{position:relative;z-index:1;margin-top:16px;border:1px solid #ddd7cb;border-radius:12px;overflow:hidden;background:#fff;break-inside:avoid}
+    #printSheet .psection h3{margin:0;padding:10px 14px;background:#f2eee5;color:#46503f;font-size:17px}
+    #printSheet table{width:100%;border-collapse:collapse}
+    #printSheet td{padding:10px 12px;border-top:1px solid #e7e0d4;vertical-align:top;font-size:14px;line-height:1.55}
+    #printSheet td:first-child{width:42%;background:#fcfbf8;font-weight:700;color:#364032}
+    #printSheet .footer{margin-top:14px;color:#6e7468;font-size:12px}
+    @media (max-width:860px){
       .grid-2,.subgrid{grid-template-columns:1fr}
-      .wrap{width:min(1120px, calc(100% - 16px))}
+      .wrap{width:min(1120px,calc(100% - 16px))}
       .content{padding:12px}
       .hero{padding:18px 16px 16px}
       .hero h1{font-size:22px}
       .btn{width:100%}
     }
-
     @media print{
-      html,body{
-        background:#ffffff !important;
-      }
-      body::before,
-      .wrap,
-      .help{
-        display:none !important;
-      }
+      @page{size:A4;margin:0}
+      html,body{background:#fff !important}
+      body::before,.wrap,.help{display:none !important}
+      #printSheet{display:block !important}
     }
   </style>
 </head>
@@ -339,9 +101,7 @@
     <div class="app">
       <div class="hero">
         <h1>BIW ITT Installation &amp; Preparation Checklist</h1>
-        <p>
-          Offline-safe version. No external PDF library, no internet dependency for PDF save, white background, embedded decorative image, and corrected company option: <strong>Bores</strong>.
-        </p>
+        <p>Same-page PDF print mode with no popup window and no external PDF library. Company name unified to <strong>borets</strong>.</p>
       </div>
 
       <div class="content">
@@ -354,27 +114,12 @@
               <div class="field"><label>Hoist or Rig Number / رقم الهويس أو الريج</label><input type="text" id="unitNumber" /></div>
               <div class="field"><label>Well Number / رقم الحفرة</label><input type="text" id="wellNumber" /></div>
               <div class="field"><label>Crew Leader / الكرو ليدر</label><input type="text" id="crewLeader" /></div>
-              <div class="field">
-                <label>Company / الشركة</label>
-                <select id="company">
-                  <option value="">Select / اختر</option>
-                  <option>Baker Hughes</option>
-                  <option>SLB</option>
-                  <option>Borets</option>
-                  <option>Al Khorayef</option>
-                </select>
-              </div>
+              <div class="field"><label>Company / الشركة</label><input type="text" id="company" value="borets" readonly /></div>
               <div class="field">
                 <label>Client / العميل</label>
                 <select id="client">
                   <option value="">Select / اختر</option>
-                  <option>PDO</option>
-                  <option>OQ</option>
-                  <option>DALEEL</option>
-                  <option>PETROGAS</option>
-                  <option>ARA</option>
-                  <option>OXY</option>
-                  <option>BP</option>
+                  <option>PDO</option><option>OQ</option><option>DALEEL</option><option>PETROGAS</option><option>ARA</option><option>OXY</option><option>BP</option>
                 </select>
               </div>
             </div>
@@ -384,11 +129,7 @@
         <div class="section">
           <div class="section-title">Section A / القسم A</div>
           <div class="section-body">
-            <div class="hint">
-              <strong>يرجى التأكيد باختيار نعم أو لا لكل بند.</strong> إذا كانت الإجابة نعم فهذا يعني أنه تم فحص البند أو التأكد منه. وإذا كانت الإجابة لا، يرجى ذكر السبب في المربع الفارغ المخصص بالأسفل.
-              <br><br>
-              <strong>Please confirm by selecting Yes or No for each item.</strong> If “Yes”, it means the item has been checked or verified. If “No”, please mention the reason in the empty box provided below.
-            </div>
+            <div class="hint"><strong>يرجى التأكيد باختيار نعم أو لا لكل بند.</strong> إذا كانت الإجابة نعم فهذا يعني أنه تم فحص البند أو التأكد منه. وإذا كانت الإجابة لا، يرجى ذكر السبب في المربع الفارغ المخصص بالأسفل.<br><br><strong>Please confirm by selecting Yes or No for each item.</strong> If “Yes”, it means the item has been checked or verified. If “No”, please mention the reason in the empty box provided below.</div>
             <div class="check-item"><div class="item-title">PPE + H2S Card / معدات السلامة + بطاقة H2S</div><div class="options" data-radio="a1"></div></div>
             <div class="check-item"><div class="item-title">Access &amp; Documents Valid / صلاحية التصاريح والمستندات</div><div class="options" data-radio="a2"></div></div>
             <div class="check-item"><div class="item-title">Contact Crew Leader Before Mobilization / التواصل مع الكرو ليدر قبل التحرك</div><div class="options" data-radio="a3"></div></div>
@@ -410,7 +151,6 @@
           <div class="section-title">Section C / القسم C</div>
           <div class="section-body">
             <div class="check-item"><div class="item-title">Tools, Equipment &amp; Personal Tools Availability / التأكد من توفر العدة والأدوات الشخصية</div><div class="options" data-radio="c1"></div></div>
-
             <div class="check-item">
               <div class="item-title">Cable Measurement &amp; Size / قياس الكيبل وتحديد المقاس</div>
               <div class="subgrid">
@@ -419,10 +159,7 @@
                   <div class="options" data-radio="c2_mle"></div>
                   <div class="field" style="margin-top:10px;">
                     <label>Size / المقاس</label>
-                    <select id="c2_mle_size">
-                      <option value="">Select / اختر</option>
-                      <option>1</option><option>2</option><option>4</option><option>6</option>
-                    </select>
+                    <select id="c2_mle_size"><option value="">Select / اختر</option><option>1</option><option>2</option><option>4</option><option>6</option></select>
                   </div>
                 </div>
                 <div class="sub-card">
@@ -430,15 +167,11 @@
                   <div class="options" data-radio="c2_main"></div>
                   <div class="field" style="margin-top:10px;">
                     <label>Size / المقاس</label>
-                    <select id="c2_main_size">
-                      <option value="">Select / اختر</option>
-                      <option>1</option><option>2</option><option>4</option><option>6</option>
-                    </select>
+                    <select id="c2_main_size"><option value="">Select / اختر</option><option>1</option><option>2</option><option>4</option><option>6</option></select>
                   </div>
                 </div>
               </div>
             </div>
-
             <div class="check-item"><div class="item-title">Landing Lead Availability / توفر اللاندنج ليد</div><div class="options" data-radio="c3"></div></div>
             <div class="check-item"><div class="item-title">Packer Inspection &amp; Measurement / فحص الباكر والقياس</div><div class="options" data-radio="c4"></div></div>
             <div class="check-item"><div class="item-title">Hanger Inspection / فحص الهنجر</div><div class="options" data-radio="c5"></div></div>
@@ -447,12 +180,7 @@
             <div class="check-item">
               <div class="item-title">System Type / نوع السستم</div>
               <div class="field">
-                <select id="systemType">
-                  <option value="">Select / اختر</option>
-                  <option>TLK0077160-F99</option>
-                  <option>ULK55-02</option>
-                  <option>ULK55-04</option>
-                </select>
+                <select id="systemType"><option value="">Select / اختر</option><option>TLK0077160-F99</option><option>ULK55-02</option><option>ULK55-04</option></select>
               </div>
             </div>
             <div class="check-item"><div class="item-title">Backup Kit Available / هل يوجد باك أب</div><div class="options" data-radio="c9"></div></div>
@@ -469,18 +197,17 @@
     </div>
   </div>
 
-  <div class="help">
-    On iPhone/iPad Safari: after pressing <strong>Save / Print PDF</strong>, choose <strong>Print</strong>, then pinch out the preview and use <strong>Share</strong> to save it as PDF.
-  </div>
+  <div class="help">On iPhone/iPad Safari: after pressing <strong>Save / Print PDF</strong>, choose <strong>Print</strong>, then pinch out the preview and use <strong>Share</strong> to save it as PDF.</div>
+
+  <div id="printSheet"></div>
 
   <script>
     'use strict';
-
-    const RADIO_GROUPS = ['a1','a2','a3','b2','c1','c2_mle','c2_main','c3','c4','c5','c6','c7','c9','c10'];
+    const RADIO_GROUPS=['a1','a2','a3','b2','c1','c2_mle','c2_main','c3','c4','c5','c6','c7','c9','c10'];
 
     function injectRadioGroups(){
-      document.querySelectorAll('[data-radio]').forEach((holder)=>{
-        const name = holder.getAttribute('data-radio');
+      document.querySelectorAll('[data-radio]').forEach(holder=>{
+        const name=holder.getAttribute('data-radio');
         holder.innerHTML = [
           `<label class="option"><input type="radio" name="${name}" value="Yes"> Yes / نعم</label>`,
           `<label class="option"><input type="radio" name="${name}" value="No"> No / لا</label>`,
@@ -488,33 +215,14 @@
         ].join('');
       });
     }
-
-    function textValue(id){
-      const el = document.getElementById(id);
-      return el ? String(el.value || '').trim() : '';
-    }
-
-    function getRadioValue(name){
-      const checked = document.querySelector(`input[name="${name}"]:checked`);
-      return checked ? checked.value : '';
-    }
-
-    function esc(value){
-      return String(value || '').replace(/[&<>"']/g, (m)=>({
-        '&':'&amp;',
-        '<':'&lt;',
-        '>':'&gt;',
-        '"':'&quot;',
-        "'":'&#39;'
-      }[m]));
-    }
-
+    function textValue(id){ const el=document.getElementById(id); return el ? String(el.value||'').trim() : ''; }
+    function getRadioValue(name){ const checked=document.querySelector(`input[name="${name}"]:checked`); return checked ? checked.value : ''; }
+    function esc(value){ return String(value||'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
     function badge(value){
-      if(value === 'Yes') return '<span style="display:inline-block;padding:4px 10px;border-radius:999px;background:#e8f7ee;color:#1f7a3d;font-weight:700;font-size:12px;">Yes</span>';
-      if(value === 'No') return '<span style="display:inline-block;padding:4px 10px;border-radius:999px;background:#fdecec;color:#b42318;font-weight:700;font-size:12px;">No</span>';
-      return `<span style="display:inline-block;padding:4px 10px;border-radius:999px;background:#f3efe7;color:#6f7b5c;font-weight:700;font-size:12px;">${esc(value || 'N/A')}</span>`;
+      if(value==='Yes') return '<span style="display:inline-block;padding:4px 10px;border-radius:999px;background:#e8f7ee;color:#1f7a3d;font-weight:700;font-size:12px;">Yes</span>';
+      if(value==='No') return '<span style="display:inline-block;padding:4px 10px;border-radius:999px;background:#fdecec;color:#b42318;font-weight:700;font-size:12px;">No</span>';
+      return `<span style="display:inline-block;padding:4px 10px;border-radius:999px;background:#f3efe7;color:#6f7b5c;font-weight:700;font-size:12px;">${esc(value||'N/A')}</span>`;
     }
-
     function collectData(){
       return {
         engineerName:textValue('engineerName'),
@@ -522,247 +230,107 @@
         unitNumber:textValue('unitNumber'),
         wellNumber:textValue('wellNumber'),
         crewLeader:textValue('crewLeader'),
-        company:textValue('company'),
+        company:'borets',
         client:textValue('client'),
         reasonA:textValue('reasonA'),
         arrivalTime:textValue('arrivalTime'),
         systemType:textValue('systemType'),
         c2_mle_size:textValue('c2_mle_size'),
         c2_main_size:textValue('c2_main_size'),
-        radios:Object.fromEntries(RADIO_GROUPS.map(k => [k, getRadioValue(k)]))
+        radios:Object.fromEntries(RADIO_GROUPS.map(k=>[k,getRadioValue(k)]))
       };
     }
-
-    function row(label, value){
-      return `<tr><td style="width:42%;padding:10px 12px;border-top:1px solid #e7e0d4;background:#fcfbf8;font-weight:700;color:#364032;">${esc(label)}</td><td style="padding:10px 12px;border-top:1px solid #e7e0d4;">${value}</td></tr>`;
+    function row(label,value){ return `<tr><td>${esc(label)}</td><td>${value}</td></tr>`; }
+    function buildPrintSheet(){
+      const d=collectData();
+      document.getElementById('printSheet').innerHTML = `
+      <div class="page">
+        <div class="watermark" aria-hidden="true">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 700">
+            <defs><linearGradient id="g" x1="0" x2="1" y1="0" y2="1"><stop offset="0%" stop-color="#6f7b5c"/><stop offset="100%" stop-color="#b89b5e"/></linearGradient></defs>
+            <path d="M0 460 C110 425 190 390 270 390 C365 390 435 450 545 450 C640 450 710 380 805 380 C930 380 1030 460 1200 510 L1200 700 L0 700 Z" fill="url(#g)"/>
+            <path d="M470 350 L615 238 L760 350 L703 350 L703 430 L527 430 L527 350 Z" fill="#8a9575"/>
+            <rect x="575" y="304" width="36" height="126" fill="#f6f3ed"/>
+            <path d="M615 205 C655 148 722 118 800 118 C885 118 953 152 1005 216" fill="none" stroke="#b89b5e" stroke-width="20" stroke-linecap="round"/>
+            <circle cx="1019" cy="223" r="18" fill="#b89b5e"/>
+          </svg>
+        </div>
+        <div class="header">
+          <h1>BIW ITT Installation &amp; Preparation Checklist</h1>
+          <p>Printable summary with no popup window and company name fixed to borets.</p>
+        </div>
+        <div class="psection"><h3>General Information</h3><table>
+          ${row('Engineer Name',esc(d.engineerName||'-'))}
+          ${row('Date',esc(d.jobDate||'-'))}
+          ${row('Hoist or Rig Number',esc(d.unitNumber||'-'))}
+          ${row('Well Number',esc(d.wellNumber||'-'))}
+          ${row('Crew Leader',esc(d.crewLeader||'-'))}
+          ${row('Company',esc(d.company))}
+          ${row('Client',esc(d.client||'-'))}
+        </table></div>
+        <div class="psection"><h3>Section A</h3><table>
+          ${row('PPE + H2S Card',badge(d.radios.a1))}
+          ${row('Access & Documents Valid',badge(d.radios.a2))}
+          ${row('Contact Crew Leader Before Mobilization',badge(d.radios.a3))}
+          ${row('Reason if No',esc(d.reasonA||'-'))}
+        </table></div>
+        <div class="psection"><h3>Section B</h3><table>
+          ${row('Arrival Time',esc(d.arrivalTime||'-'))}
+          ${row('Notify Crew Leader Upon Arrival',badge(d.radios.b2))}
+        </table></div>
+        <div class="psection"><h3>Section C</h3><table>
+          ${row('Tools, Equipment & Personal Tools Availability',badge(d.radios.c1))}
+          ${row('MLE Cable Checked',badge(d.radios.c2_mle))}
+          ${row('MLE Cable Size',esc(d.c2_mle_size||'-'))}
+          ${row('Main Cable Checked',badge(d.radios.c2_main))}
+          ${row('Main Cable Size',esc(d.c2_main_size||'-'))}
+          ${row('Landing Lead Availability',badge(d.radios.c3))}
+          ${row('Packer Inspection & Measurement',badge(d.radios.c4))}
+          ${row('Hanger Inspection',badge(d.radios.c5))}
+          ${row('Christmas Tree & Bonnet Check',badge(d.radios.c6))}
+          ${row('Casing Size Verification',badge(d.radios.c7))}
+          ${row('System Type',esc(d.systemType||'-'))}
+          ${row('Backup Kit Available',badge(d.radios.c9))}
+          ${row('Notify Crew Leader Job is Ready',badge(d.radios.c10))}
+        </table></div>
+        <div class="footer">Generated from BIW ITT checklist form.</div>
+      </div>`;
     }
-
-    function getPrintHtml(){
-      const d = collectData();
-
-      return `<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>BIW ITT Checklist Summary</title>
-<style>
-  @page{size:A4;margin:14mm}
-  *{box-sizing:border-box}
-  html,body{margin:0;padding:0;background:#fff;color:#2f352c;font-family:Arial,Helvetica,sans-serif}
-  body{padding:0}
-  .page{
-    width:100%;
-    position:relative;
-  }
-  .watermark{
-    position:absolute;
-    inset:90px 0 auto 0;
-    text-align:center;
-    opacity:.08;
-    pointer-events:none;
-  }
-  .watermark svg{
-    width:78%;
-    max-width:560px;
-    height:auto;
-  }
-  .header{
-    position:relative;
-    z-index:1;
-    background:linear-gradient(90deg,#6f7b5c,#8a9575);
-    color:#fff;
-    padding:16px 18px;
-    border-radius:14px;
-  }
-  .header h1{
-    margin:0;
-    font-size:24px;
-    line-height:1.3;
-  }
-  .header p{
-    margin:8px 0 0;
-    font-size:13px;
-    line-height:1.6;
-    color:rgba(255,255,255,.95);
-  }
-  .section{
-    position:relative;
-    z-index:1;
-    margin-top:16px;
-    border:1px solid #ddd7cb;
-    border-radius:12px;
-    overflow:hidden;
-    background:#fff;
-  }
-  .section h3{
-    margin:0;
-    padding:10px 14px;
-    background:#f2eee5;
-    color:#46503f;
-    font-size:17px;
-  }
-  table{
-    width:100%;
-    border-collapse:collapse;
-  }
-  .footer{
-    margin-top:14px;
-    color:#6e7468;
-    font-size:12px;
-  }
-</style>
-</head>
-<body>
-  <div class="page">
-    <div class="watermark" aria-hidden="true">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 700">
-        <defs>
-          <linearGradient id="g" x1="0" x2="1" y1="0" y2="1">
-            <stop offset="0%" stop-color="#6f7b5c"/>
-            <stop offset="100%" stop-color="#b89b5e"/>
-          </linearGradient>
-        </defs>
-        <path d="M0 460 C110 425 190 390 270 390 C365 390 435 450 545 450 C640 450 710 380 805 380 C930 380 1030 460 1200 510 L1200 700 L0 700 Z" fill="url(#g)"/>
-        <path d="M470 350 L615 238 L760 350 L703 350 L703 430 L527 430 L527 350 Z" fill="#8a9575"/>
-        <rect x="575" y="304" width="36" height="126" fill="#f6f3ed"/>
-        <path d="M615 205 C655 148 722 118 800 118 C885 118 953 152 1005 216" fill="none" stroke="#b89b5e" stroke-width="20" stroke-linecap="round"/>
-        <circle cx="1019" cy="223" r="18" fill="#b89b5e"/>
-      </svg>
-    </div>
-
-    <div class="header">
-      <h1>BIW ITT Installation &amp; Preparation Checklist</h1>
-      <p>Offline printable summary with embedded graphics and white background.</p>
-    </div>
-
-    <div class="section">
-      <h3>General Information</h3>
-      <table>
-        ${row('Engineer Name', esc(d.engineerName || '-'))}
-        ${row('Date', esc(d.jobDate || '-'))}
-        ${row('Hoist or Rig Number', esc(d.unitNumber || '-'))}
-        ${row('Well Number', esc(d.wellNumber || '-'))}
-        ${row('Crew Leader', esc(d.crewLeader || '-'))}
-        ${row('Company', esc(d.company || '-'))}
-        ${row('Client', esc(d.client || '-'))}
-      </table>
-    </div>
-
-    <div class="section">
-      <h3>Section A</h3>
-      <table>
-        ${row('PPE + H2S Card', badge(d.radios.a1))}
-        ${row('Access & Documents Valid', badge(d.radios.a2))}
-        ${row('Contact Crew Leader Before Mobilization', badge(d.radios.a3))}
-        ${row('Reason if No', esc(d.reasonA || '-'))}
-      </table>
-    </div>
-
-    <div class="section">
-      <h3>Section B</h3>
-      <table>
-        ${row('Arrival Time', esc(d.arrivalTime || '-'))}
-        ${row('Notify Crew Leader Upon Arrival', badge(d.radios.b2))}
-      </table>
-    </div>
-
-    <div class="section">
-      <h3>Section C</h3>
-      <table>
-        ${row('Tools, Equipment & Personal Tools Availability', badge(d.radios.c1))}
-        ${row('MLE Cable Checked', badge(d.radios.c2_mle))}
-        ${row('MLE Cable Size', esc(d.c2_mle_size || '-'))}
-        ${row('Main Cable Checked', badge(d.radios.c2_main))}
-        ${row('Main Cable Size', esc(d.c2_main_size || '-'))}
-        ${row('Landing Lead Availability', badge(d.radios.c3))}
-        ${row('Packer Inspection & Measurement', badge(d.radios.c4))}
-        ${row('Hanger Inspection', badge(d.radios.c5))}
-        ${row('Christmas Tree & Bonnet Check', badge(d.radios.c6))}
-        ${row('Casing Size Verification', badge(d.radios.c7))}
-        ${row('System Type', esc(d.systemType || '-'))}
-        ${row('Backup Kit Available', badge(d.radios.c9))}
-        ${row('Notify Crew Leader Job is Ready', badge(d.radios.c10))}
-      </table>
-    </div>
-
-    <div class="footer">Generated from BIW ITT checklist form.</div>
-  </div>
-</body>
-</html>`;
-    }
-
-    function setStatus(message){
-      const status = document.getElementById('statusText');
-      status.textContent = message;
-    }
-
-    function openPrintWindow(){
-      const printHtml = getPrintHtml();
-      const printWindow = window.open('', '_blank');
-
-      if(!printWindow){
-        throw new Error('POPUP_BLOCKED');
-      }
-
-      printWindow.document.open();
-      printWindow.document.write(printHtml);
-      printWindow.document.close();
-
-      printWindow.onload = () => {
-        setTimeout(() => {
-          try{
-            printWindow.focus();
-            printWindow.print();
-          }catch(err){}
-        }, 250);
-      };
-    }
-
+    function setStatus(message){ document.getElementById('statusText').textContent = message; }
     function saveAsPdf(){
-      try{
-        openPrintWindow();
-        setStatus('Print view opened. On iPhone Safari, choose Print, then save/share as PDF.');
-      }catch(err){
-        if(err && err.message === 'POPUP_BLOCKED'){
-          setStatus('Popup was blocked. Allow popups for this page, then try again.');
-        }else{
-          setStatus('Unable to open the printable PDF view.');
-        }
-      }
+      buildPrintSheet();
+      setStatus('Opening print dialog from the same page...');
+      setTimeout(()=>{ window.print(); }, 150);
     }
-
     async function shareSummary(){
       try{
-        const html = getPrintHtml();
-        const blob = new Blob([html], {type:'text/html'});
-        const file = new File([blob], 'BIW_ITT_Checklist_Summary.html', {type:'text/html'});
-
-        if(navigator.share && (!navigator.canShare || navigator.canShare({ files:[file] }))){
-          await navigator.share({
-            files:[file],
-            title:'BIW ITT Checklist Summary',
-            text:'BIW ITT checklist summary'
-          });
+        const d=collectData();
+        const text=[
+          'BIW ITT Installation & Preparation Checklist',
+          `Engineer Name: ${d.engineerName || '-'}`,
+          `Date: ${d.jobDate || '-'}`,
+          `Hoist or Rig Number: ${d.unitNumber || '-'}`,
+          `Well Number: ${d.wellNumber || '-'}`,
+          `Crew Leader: ${d.crewLeader || '-'}`,
+          `Company: borets`,
+          `Client: ${d.client || '-'}`,
+          `Arrival Time: ${d.arrivalTime || '-'}`,
+          `System Type: ${d.systemType || '-'}`,
+        ].join('\\n');
+        if(navigator.share){
+          await navigator.share({title:'BIW ITT Checklist Summary', text});
           setStatus('Summary shared successfully.');
-          return;
+        }else{
+          setStatus('Share is not supported on this device/browser.');
         }
-
-        openPrintWindow();
-        setStatus('Direct share is not supported here. Opened printable view instead.');
       }catch(err){
-        setStatus('Share was not completed. Printable view opened as fallback.');
-        try{ openPrintWindow(); }catch(_) {}
+        setStatus('Share was cancelled or not completed.');
       }
     }
-
     injectRadioGroups();
-
-    /* Review pass guards */
-    console.assert(document.getElementById('company'), 'company select missing');
-    console.assert(document.documentElement.innerHTML.includes('Bores'), 'Bores text missing');
-    console.assert(!document.documentElement.innerHTML.includes('html2pdf'), 'External PDF library should be removed');
-    console.assert(!document.documentElement.innerHTML.includes('left:-10000px'), 'Old off-screen PDF root should be removed');
+    console.assert(document.documentElement.innerHTML.includes('borets'),'borets missing');
+    console.assert(!document.documentElement.innerHTML.includes('window.open'),'popup logic should be removed');
+    console.assert(!document.documentElement.innerHTML.includes('html2pdf'),'external pdf library should not exist');
   </script>
 </body>
 </html>
