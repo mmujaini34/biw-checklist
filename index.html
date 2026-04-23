@@ -56,7 +56,7 @@
     .badge-no { background:#fdecec; color:var(--no); }
     .badge-neutral { background:#eef4ff; color:var(--blue); }
     .pdf-only-note { margin-top:14px; color:#475467; font-size:13px; }
-    #pdfRoot { position:fixed; left:-99999px; top:0; visibility:hidden; }
+    #pdfRoot { position:absolute; left:-10000px; top:0; width:794px; visibility:visible; opacity:1; pointer-events:none; z-index:-1; }
     @media (max-width: 820px) { .grid-2, .subgrid { grid-template-columns:1fr; } .content { padding:14px; } .section-title { font-size:17px; } .summary-page { width:100%; min-height:auto; padding:18px; } }
     @media print { body { background:#fff; } .page, .actions, .status { display:none !important; } }
   </style>
@@ -262,32 +262,100 @@
         </div>`;
     }
 
+    function waitForImages(container) {
+      const images = Array.from(container.querySelectorAll('img'));
+      if (!images.length) return Promise.resolve();
+      return Promise.all(images.map(img => new Promise(resolve => {
+        if (img.complete && img.naturalWidth > 0) return resolve();
+        const done = () => resolve();
+        img.addEventListener('load', done, { once: true });
+        img.addEventListener('error', done, { once: true });
+      })));
+    }
+
+    function downloadBlob(blob, filename) {
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1500);
+    }
+
+    async function buildPdfBlob(element, opt) {
+      const worker = html2pdf().set(opt).from(element);
+      return worker.toPdf().get('pdf').then(pdf => pdf.output('blob'));
+    }
+
     async function generatePDF(tryShare) {
       const status = document.getElementById('statusText');
       status.textContent = tryShare ? 'Generating PDF and opening share options... / جارٍ إنشاء PDF وفتح خيارات المشاركة...' : 'Generating PDF... / جارٍ إنشاء ملف PDF...';
+
+      if (typeof html2pdf === 'undefined') {
+        status.textContent = 'PDF tool is still loading, please try again in a moment. / أداة PDF ما زالت قيد التحميل، حاول بعد لحظة.';
+        return;
+      }
+
       const pdfRoot = document.getElementById('pdfRoot');
       pdfRoot.innerHTML = buildSummaryHtml();
       setHeaderImages();
       const element = pdfRoot.firstElementChild;
-      const opt = { margin: 0, filename: `BIW_ITT_Checklist_${new Date().toISOString().slice(0,10)}.pdf`, image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2, useCORS: true, backgroundColor: '#ffffff' }, jsPDF: { unit: 'pt', format: 'a4', orientation: 'portrait' }, pagebreak: { mode: ['css', 'legacy'] } };
+      const filename = `BIW_ITT_Checklist_${new Date().toISOString().slice(0,10)}.pdf`;
+      const opt = {
+        margin: 0,
+        filename,
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2, useCORS: true, backgroundColor: '#ffffff' },
+        jsPDF: { unit: 'pt', format: 'a4', orientation: 'portrait' },
+        pagebreak: { mode: ['css', 'legacy'] }
+      };
+
       try {
-        if (typeof html2pdf === 'undefined') {
-        status.textContent = 'PDF tool is still loading, please try again in a moment. / أداة PDF ما زالت قيد التحميل، حاول بعد لحظة.';
-        return;
-      }
-      const worker = html2pdf().from(element).set(opt);
-        const pdfBlob = await worker.outputPdf('blob');
-        if (tryShare && navigator.canShare && navigator.canShare({ files: [new File([pdfBlob], opt.filename, { type: 'application/pdf' })] })) {
-          const file = new File([pdfBlob], opt.filename, { type: 'application/pdf' });
-          await navigator.share({ files: [file], title: 'BIW ITT Checklist', text: 'Installation & Preparation Checklist PDF' });
-          status.textContent = 'PDF generated and share sheet opened. / تم إنشاء الملف وفتح خيارات المشاركة.';
-        } else {
-          await worker.save();
-          status.textContent = tryShare ? 'Your device does not support direct file sharing here, so the PDF was downloaded instead. / جهازك لا يدعم المشاركة المباشرة هنا، لذلك تم تنزيل الملف بدلاً من ذلك.' : 'PDF generated successfully. / تم إنشاء ملف PDF بنجاح.';
+        await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+        await waitForImages(element);
+        const pdfBlob = await buildPdfBlob(element, opt);
+
+        if (!(pdfBlob instanceof Blob) || pdfBlob.size === 0) {
+          throw new Error('EMPTY_PDF_BLOB');
         }
+
+        if (tryShare) {
+          const file = new File([pdfBlob], filename, { type: 'application/pdf' });
+          const canShareFile = typeof navigator !== 'undefined' && navigator.canShare && navigator.canShare({ files: [file] });
+
+          if (canShareFile && navigator.share) {
+            try {
+              await navigator.share({ files: [file], title: 'BIW ITT Checklist', text: 'Installation & Preparation Checklist PDF' });
+              status.textContent = 'PDF generated and share sheet opened. / تم إنشاء الملف وفتح خيارات المشاركة.';
+              return;
+            } catch (shareErr) {
+              if (shareErr && shareErr.name === 'AbortError') {
+                status.textContent = 'Share was cancelled. The PDF was not lost and can be generated again. / تم إلغاء المشاركة. الملف لم يضِع ويمكن إنشاؤه مرة أخرى.';
+                return;
+              }
+              console.error('Share failed:', shareErr);
+              downloadBlob(pdfBlob, filename);
+              status.textContent = 'Direct sharing failed, so the PDF was downloaded instead. / تعذرت المشاركة المباشرة، لذلك تم تنزيل الملف بدلاً من ذلك.';
+              return;
+            }
+          }
+
+          downloadBlob(pdfBlob, filename);
+          status.textContent = 'Your device does not support direct file sharing here, so the PDF was downloaded instead. / جهازك لا يدعم المشاركة المباشرة هنا، لذلك تم تنزيل الملف بدلاً من ذلك.';
+          return;
+        }
+
+        downloadBlob(pdfBlob, filename);
+        status.textContent = 'PDF generated successfully. / تم إنشاء ملف PDF بنجاح.';
       } catch (err) {
-        console.error(err);
-        status.textContent = 'An error occurred while generating the PDF. / حدث خطأ أثناء إنشاء ملف PDF.';
+        console.error('PDF generation failed:', err);
+        if (err && err.message === 'EMPTY_PDF_BLOB') {
+          status.textContent = 'The PDF was created as an empty file. This usually means the printable content was not rendered correctly. / تم إنشاء ملف PDF فارغ، وغالبًا السبب أن محتوى الطباعة لم يُرسم بشكل صحيح.';
+        } else {
+          status.textContent = 'An error occurred while creating the PDF. Please try again after the page fully loads. / حدث خطأ أثناء إنشاء ملف PDF. حاول مرة أخرى بعد اكتمال تحميل الصفحة.';
+        }
       }
     }
 
