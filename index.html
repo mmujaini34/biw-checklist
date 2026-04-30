@@ -1684,4 +1684,87 @@ const SAVED_ITEMS=[{"desc":"UNI-LOK PRESSURE BLOCK ASSY 5000PSI","part":"ULK55-0
 })();
 /* ===== end v22 ===== */
 </script>
+
+<script>
+/* ===== v24 ITEMS HORIZONTAL ROWS - REAL TABLE ROWS FIX ===== */
+(function(){
+  const ITEM_KEYS=["qty","desc","part","manual","serial"];
+  function esc(v){return String(v??"").replace(/[&<>\"']/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[ch]));}
+  function validRows(){try{if(typeof savedItemRows==="undefined"||!Array.isArray(savedItemRows))return[];return savedItemRows.filter(r=>r&&ITEM_KEYS.some(k=>String(r[k]||"").trim()));}catch(e){return[];}}
+  function removeOld(table){Array.from(table.querySelectorAll("tr.ts-v24-item-row,tr.ts-v24-filler-row")).forEach(tr=>tr.remove());}
+  function renderItemsHorizontalRows(){
+    const table=document.querySelector("#reportPage .items-table"); if(!table)return;
+    const body=table.tBodies&&table.tBodies[0]?table.tBodies[0]:table;
+    const oldRow=table.rows&&table.rows[1]?table.rows[1]:null;
+    if(oldRow)oldRow.classList.add("ts-v24-hidden-original");
+    removeOld(table);
+    const rows=validRows();
+    rows.forEach((row,index)=>{
+      const tr=document.createElement("tr"); tr.className="ts-v24-item-row";
+      tr.innerHTML='<td class="ts-v24-qty">'+esc(row.qty||"")+'</td>'+
+        '<td class="ts-v24-desc">'+esc(row.desc||"")+'</td>'+
+        '<td class="ts-v24-part">'+esc(row.part||"")+'</td>'+
+        '<td class="ts-v24-manual">'+esc(index===0?(row.manual||"A400-0405 REV"):"")+'</td>'+
+        '<td class="ts-v24-serial">'+esc(row.serial||"")+'</td>';
+      body.appendChild(tr);
+    });
+    const filler=document.createElement("tr"); filler.className="ts-v24-filler-row"; filler.innerHTML='<td colspan="5"></td>'; body.appendChild(filler);
+    fitRows(table);
+  }
+  function fitRows(table){
+    const rows=Array.from(table.querySelectorAll("tr.ts-v24-item-row"));
+    const filler=table.querySelector("tr.ts-v24-filler-row td");
+    const count=rows.length||1;
+    const font=count<=5?12:count<=8?10.5:count<=12?9:8;
+    const minRow=count<=5?42:count<=8?34:28;
+    rows.forEach(tr=>Array.from(tr.children).forEach(td=>{td.style.fontSize=font+"px";td.style.lineHeight=count>8?"1.05":"1.12";td.style.minHeight=minRow+"px";}));
+    if(filler){
+      filler.style.height="10px";
+      requestAnimationFrame(()=>{let used=0;rows.forEach(tr=>{used+=tr.getBoundingClientRect().height||minRow;});filler.style.height=Math.max(10,360-used)+"px";});
+    }
+  }
+  function patchUpdate(){
+    if(typeof window.updateReport!=="function")return false;
+    if(window.updateReport.__v24HorizontalRows)return true;
+    const original=window.updateReport;
+    window.updateReport=function(){const result=original.apply(this,arguments);renderItemsHorizontalRows();return result;};
+    window.updateReport.__v24HorizontalRows=true; return true;
+  }
+  function patchPdf(){
+    if(typeof window.createPdfBlob!=="function")return false;
+    if(window.createPdfBlob.__v24HorizontalRows)return true;
+    const original=window.createPdfBlob;
+    window.createPdfBlob=async function(){
+      if(typeof window.updateReport==="function")window.updateReport();
+      renderItemsHorizontalRows();
+      await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(()=>{renderItemsHorizontalRows();resolve();})));
+      return await original.apply(this,arguments);
+    };
+    window.createPdfBlob.__v24HorizontalRows=true; return true;
+  }
+  function start(){let n=0;const t=setInterval(()=>{n++;const a=patchUpdate(),b=patchPdf();try{renderItemsHorizontalRows();}catch(e){}if((a&&b)||n>80){clearInterval(t);try{if(typeof window.updateReport==="function")window.updateReport();renderItemsHorizontalRows();}catch(e){}}},100);}
+  if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",start);else start();
+  window.__renderItemsHorizontalRows=renderItemsHorizontalRows;
+})();
+/* ===== end v24 items horizontal rows ===== */
+</script>
+
+<style>
+/* ===== v24 ITEMS HORIZONTAL ROWS CSS - PDF ONLY ===== */
+#reportPage .items-table tr.ts-v24-hidden-original{display:none!important;}
+#reportPage .items-table tr.ts-v24-item-row td{
+  height:auto!important;min-height:34px!important;padding:6px 7px!important;border:2px solid #000!important;
+  vertical-align:middle!important;font-weight:bold!important;color:#000!important;background:#fff!important;
+  white-space:normal!important;word-break:break-word!important;overflow-wrap:anywhere!important;text-align:center!important;overflow:hidden!important;
+}
+#reportPage .items-table tr.ts-v24-item-row .ts-v24-desc{text-align:left!important;}
+#reportPage .items-table tr.ts-v24-filler-row td{height:180px;border:2px solid #000!important;border-top:none!important;background:#fff!important;padding:0!important;}
+#reportPage .items-table th.qty,#reportPage .items-table .ts-v24-qty{width:15%!important;}
+#reportPage .items-table th.desc,#reportPage .items-table .ts-v24-desc{width:33%!important;}
+#reportPage .items-table th.part,#reportPage .items-table .ts-v24-part{width:19%!important;}
+#reportPage .items-table th.manual,#reportPage .items-table .ts-v24-manual{width:17%!important;}
+#reportPage .items-table th.serial,#reportPage .items-table .ts-v24-serial{width:16%!important;}
+/* ===== end v24 css ===== */
+</style>
+
 </body></html>
