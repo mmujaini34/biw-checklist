@@ -345,24 +345,10 @@ body.ui-night .serial-status-warn{
 
 
 
-/* ===== v23 PDF ITEMS TABLE-CELL FIX - PDF SHAPE UNCHANGED ===== */
-/*
-  Important fix: do NOT turn the real table cells (#outQty/#outDesc/etc.) into display:block.
-  Keeping them as table-cell prevents Description and Part Number from falling under Quantity.
-*/
-#reportPage .items-table{
-  table-layout: fixed !important;
-  border-collapse: collapse !important;
-}
-
+/* ===== v22 PDF ITEMS - FINAL FIX ===== */
 #reportPage .report-items-cell{
-  display: table-cell !important;
   vertical-align: top !important;
   padding: 0 !important;
-  box-sizing: border-box !important;
-  white-space: normal !important;
-  word-break: normal !important;
-  overflow-wrap: anywhere !important;
 }
 
 #reportPage #outQty,
@@ -370,10 +356,12 @@ body.ui-night .serial-status-warn{
 #reportPage #outPart,
 #reportPage #outManual,
 #reportPage #outSerial{
-  display: table-cell !important;
-  width: auto !important;
-  padding: 0 !important;
+  display: block !important;
+  width: 100% !important;
+  padding: 6px 8px !important;
   box-sizing: border-box !important;
+  white-space: normal !important;
+  word-break: break-word !important;
 }
 
 #reportPage .ts-pdf-item-row{
@@ -382,10 +370,10 @@ body.ui-night .serial-status-warn{
   width: 100% !important;
   min-height: 48px !important;
   margin: 0 0 6px 0 !important;
-  padding: 5px 7px !important;
-  line-height: 1.18 !important;
-  word-break: normal !important;
-  overflow-wrap: anywhere !important;
+  padding: 4px 2px !important;
+  line-height: 1.3 !important;
+  word-break: break-word !important;
+  overflow-wrap: break-word !important;
   white-space: normal !important;
   box-sizing: border-box !important;
 }
@@ -403,15 +391,73 @@ body.ui-night .serial-status-warn{
 #reportPage .ts-pdf-item-row > span{
   display: inline-block !important;
   width: 100% !important;
-  word-break: normal !important;
-  overflow-wrap: anywhere !important;
+  word-break: break-word !important;
+  overflow-wrap: break-word !important;
   white-space: normal !important;
 }
 
 #reportPage .ts-pdf-item-row:last-child{
   margin-bottom: 0 !important;
 }
-/* ===== end v23 ===== */
+/* ===== end v22 ===== */
+
+
+
+/* ===== v24 PDF ITEMS - REAL TABLE ROWS ===== */
+
+/* الجدول الداخلي للـ items */
+#reportPage .ts-items-table{
+  width: 100% !important;
+  border-collapse: collapse !important;
+  table-layout: fixed !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+#reportPage .ts-items-table td{
+  border: 1px solid #000 !important;
+  padding: 8px 6px !important;
+  vertical-align: middle !important;
+  word-break: break-word !important;
+  overflow-wrap: break-word !important;
+  white-space: normal !important;
+  font-size: inherit !important;
+  line-height: 1.3 !important;
+  box-sizing: border-box !important;
+}
+
+#reportPage .ts-items-table td.ts-center{
+  text-align: center !important;
+}
+
+#reportPage .ts-items-table td.ts-left{
+  text-align: left !important;
+}
+
+/* عرض الأعمدة (تطابق نسب الجدول الأصلي - عدّل لو احتجت) */
+#reportPage .ts-items-table col.col-qty    { width: 11% !important; }
+#reportPage .ts-items-table col.col-desc   { width: 36% !important; }
+#reportPage .ts-items-table col.col-part   { width: 18% !important; }
+#reportPage .ts-items-table col.col-manual { width: 17% !important; }
+#reportPage .ts-items-table col.col-serial { width: 18% !important; }
+
+/* إخفاء الخلايا القديمة المنفصلة */
+#reportPage td.report-items-cell:has(#outQty),
+#reportPage td.report-items-cell:has(#outDesc),
+#reportPage td.report-items-cell:has(#outPart),
+#reportPage td.report-items-cell:has(#outManual),
+#reportPage td.report-items-cell:has(#outSerial){
+  padding: 0 !important;
+}
+
+#reportPage #outQty,
+#reportPage #outDesc,
+#reportPage #outPart,
+#reportPage #outManual,
+#reportPage #outSerial{
+  display: none !important;
+}
+/* ===== end v24 styles ===== */
 
 </style>
 </head><body>
@@ -1683,88 +1729,185 @@ const SAVED_ITEMS=[{"desc":"UNI-LOK PRESSURE BLOCK ASSY 5000PSI","part":"ULK55-0
   window.__rebuildItems = rebuildItemColumns;
 })();
 /* ===== end v22 ===== */
-</script>
 
-<script>
-/* ===== v24 ITEMS HORIZONTAL ROWS - REAL TABLE ROWS FIX ===== */
+
+/* ===== v24 PDF ITEMS - BUILD REAL TABLE ROWS ===== */
 (function(){
-  const ITEM_KEYS=["qty","desc","part","manual","serial"];
-  function esc(v){return String(v??"").replace(/[&<>\"']/g,ch=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[ch]));}
-  function validRows(){try{if(typeof savedItemRows==="undefined"||!Array.isArray(savedItemRows))return[];return savedItemRows.filter(r=>r&&ITEM_KEYS.some(k=>String(r[k]||"").trim()));}catch(e){return[];}}
-  function removeOld(table){Array.from(table.querySelectorAll("tr.ts-v24-item-row,tr.ts-v24-filler-row")).forEach(tr=>tr.remove());}
-  function renderItemsHorizontalRows(){
-    const table=document.querySelector("#reportPage .items-table"); if(!table)return;
-    const body=table.tBodies&&table.tBodies[0]?table.tBodies[0]:table;
-    const oldRow=table.rows&&table.rows[1]?table.rows[1]:null;
-    if(oldRow)oldRow.classList.add("ts-v24-hidden-original");
-    removeOld(table);
-    const rows=validRows();
-    rows.forEach((row,index)=>{
-      const tr=document.createElement("tr"); tr.className="ts-v24-item-row";
-      tr.innerHTML='<td class="ts-v24-qty">'+esc(row.qty||"")+'</td>'+
-        '<td class="ts-v24-desc">'+esc(row.desc||"")+'</td>'+
-        '<td class="ts-v24-part">'+esc(row.part||"")+'</td>'+
-        '<td class="ts-v24-manual">'+esc(index===0?(row.manual||"A400-0405 REV"):"")+'</td>'+
-        '<td class="ts-v24-serial">'+esc(row.serial||"")+'</td>';
-      body.appendChild(tr);
+  const COLUMN_KEYS = ["qty", "desc", "part", "manual", "serial"];
+  const TABLE_ID = "tsItemsRealTable";
+
+  function escapeHtml(value){
+    return String(value ?? "").replace(/[&<>"']/g, function(ch){
+      return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch];
     });
-    const filler=document.createElement("tr"); filler.className="ts-v24-filler-row"; filler.innerHTML='<td colspan="5"></td>'; body.appendChild(filler);
-    fitRows(table);
   }
-  function fitRows(table){
-    const rows=Array.from(table.querySelectorAll("tr.ts-v24-item-row"));
-    const filler=table.querySelector("tr.ts-v24-filler-row td");
-    const count=rows.length||1;
-    const font=count<=5?12:count<=8?10.5:count<=12?9:8;
-    const minRow=count<=5?42:count<=8?34:28;
-    rows.forEach(tr=>Array.from(tr.children).forEach(td=>{td.style.fontSize=font+"px";td.style.lineHeight=count>8?"1.05":"1.12";td.style.minHeight=minRow+"px";}));
-    if(filler){
-      filler.style.height="10px";
-      requestAnimationFrame(()=>{let used=0;rows.forEach(tr=>{used+=tr.getBoundingClientRect().height||minRow;});filler.style.height=Math.max(10,360-used)+"px";});
-    }
+
+  /* قراءة البيانات من النص الخام (textContent يحفظ \n) */
+  function readColumnArray(id){
+    const el = document.getElementById(id);
+    if(!el) return [];
+    const text = el.textContent || "";
+    if(!text.trim()) return [];
+    return text.split("\n").map(function(s){ return s; });
   }
-  function patchUpdate(){
-    if(typeof window.updateReport!=="function")return false;
-    if(window.updateReport.__v24HorizontalRows)return true;
-    const original=window.updateReport;
-    window.updateReport=function(){const result=original.apply(this,arguments);renderItemsHorizontalRows();return result;};
-    window.updateReport.__v24HorizontalRows=true; return true;
-  }
-  function patchPdf(){
-    if(typeof window.createPdfBlob!=="function")return false;
-    if(window.createPdfBlob.__v24HorizontalRows)return true;
-    const original=window.createPdfBlob;
-    window.createPdfBlob=async function(){
-      if(typeof window.updateReport==="function")window.updateReport();
-      renderItemsHorizontalRows();
-      await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(()=>{renderItemsHorizontalRows();resolve();})));
-      return await original.apply(this,arguments);
+
+  /* بناء الجدول الحقيقي بصفوف أفقية */
+  function buildRealTable(){
+    const data = {
+      qty:    readColumnArray("outQty"),
+      desc:   readColumnArray("outDesc"),
+      part:   readColumnArray("outPart"),
+      manual: readColumnArray("outManual"),
+      serial: readColumnArray("outSerial")
     };
-    window.createPdfBlob.__v24HorizontalRows=true; return true;
+
+    const maxRows = Math.max(
+      data.qty.length, data.desc.length, data.part.length,
+      data.manual.length, data.serial.length
+    );
+
+    if(maxRows === 0) return;
+
+    /* تحقق إن فيه محتوى فعلي */
+    const hasContent = COLUMN_KEYS.some(function(key){
+      return data[key].some(function(v){ return String(v || "").trim(); });
+    });
+    if(!hasContent) return;
+
+    /* ابني صفوف الجدول */
+    const rows = [];
+    for(let i = 0; i < maxRows; i++){
+      rows.push(
+        '<tr>' +
+          '<td class="ts-center">' + escapeHtml(data.qty[i] || "") + '</td>' +
+          '<td class="ts-left">' + escapeHtml(data.desc[i] || "") + '</td>' +
+          '<td class="ts-center">' + escapeHtml(data.part[i] || "") + '</td>' +
+          '<td class="ts-center">' + escapeHtml(data.manual[i] || "") + '</td>' +
+          '<td class="ts-center">' + escapeHtml(data.serial[i] || "") + '</td>' +
+        '</tr>'
+      );
+    }
+
+    const tableHTML = 
+      '<table class="ts-items-table" id="' + TABLE_ID + '">' +
+        '<colgroup>' +
+          '<col class="col-qty">' +
+          '<col class="col-desc">' +
+          '<col class="col-part">' +
+          '<col class="col-manual">' +
+          '<col class="col-serial">' +
+        '</colgroup>' +
+        '<tbody>' + rows.join("") + '</tbody>' +
+      '</table>';
+
+    /* احذف الجدول القديم لو موجود */
+    const oldTable = document.getElementById(TABLE_ID);
+    if(oldTable && oldTable.parentNode){
+      oldTable.parentNode.removeChild(oldTable);
+    }
+
+    /* أوجد المكان المناسب لإدراج الجدول */
+    const outQty = document.getElementById("outQty");
+    if(!outQty) return;
+
+    /* اصعد للسطر اللي يحتوي على outQty (tr في الجدول الكبير) */
+    let row = outQty;
+    while(row && row.tagName !== "TR" && row.parentNode){
+      row = row.parentNode;
+    }
+    if(!row || row.tagName !== "TR") return;
+
+    /* أنشئ صف جديد بخلية واحدة تحتوي على الجدول الجديد */
+    const newRow = document.createElement("tr");
+    newRow.id = "tsItemsRealRow";
+
+    const newCell = document.createElement("td");
+    newCell.colSpan = 5;
+    newCell.style.padding = "0";
+    newCell.style.border = "none";
+    newCell.innerHTML = tableHTML;
+
+    newRow.appendChild(newCell);
+
+    /* احذف الصف الجديد القديم لو كان موجود */
+    const oldNewRow = document.getElementById("tsItemsRealRow");
+    if(oldNewRow && oldNewRow.parentNode){
+      oldNewRow.parentNode.removeChild(oldNewRow);
+    }
+
+    /* أدرج الصف الجديد بعد صف outQty مباشرة */
+    if(row.parentNode){
+      row.parentNode.insertBefore(newRow, row.nextSibling);
+    }
+
+    /* اخفِ الصف القديم اللي فيه الأعمدة المنفصلة */
+    row.style.display = "none";
   }
-  function start(){let n=0;const t=setInterval(()=>{n++;const a=patchUpdate(),b=patchPdf();try{renderItemsHorizontalRows();}catch(e){}if((a&&b)||n>80){clearInterval(t);try{if(typeof window.updateReport==="function")window.updateReport();renderItemsHorizontalRows();}catch(e){}}},100);}
-  if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",start);else start();
-  window.__renderItemsHorizontalRows=renderItemsHorizontalRows;
+
+  function patchUpdateReport(){
+    if(typeof window.updateReport !== "function") return false;
+    if(window.updateReport.__v24Patched) return true;
+
+    const original = window.updateReport;
+    window.updateReport = function(){
+      const result = original.apply(this, arguments);
+      try{ buildRealTable(); }catch(e){ console.warn("v24 buildRealTable:", e); }
+      return result;
+    };
+    window.updateReport.__v24Patched = true;
+    return true;
+  }
+
+  function patchCreatePdfBlob(){
+    if(typeof window.createPdfBlob !== "function") return false;
+    if(window.createPdfBlob.__v24Patched) return true;
+
+    const original = window.createPdfBlob;
+    window.createPdfBlob = async function(){
+      if(typeof window.updateReport === "function"){
+        try{ window.updateReport(); }catch(e){}
+      }
+      try{ buildRealTable(); }catch(e){}
+
+      await new Promise(function(resolve){
+        requestAnimationFrame(function(){
+          requestAnimationFrame(function(){
+            try{ buildRealTable(); }catch(e){}
+            resolve();
+          });
+        });
+      });
+
+      return await original.apply(this, arguments);
+    };
+    window.createPdfBlob.__v24Patched = true;
+    return true;
+  }
+
+  function tryPatch(){
+    let attempts = 0;
+    const interval = setInterval(function(){
+      attempts++;
+      const u = patchUpdateReport();
+      const p = patchCreatePdfBlob();
+      if((u && p) || attempts >= 80){
+        clearInterval(interval);
+        if(typeof window.updateReport === "function"){
+          try{ window.updateReport(); }catch(e){}
+        }
+      }
+    }, 200);
+  }
+
+  if(document.readyState === "loading"){
+    document.addEventListener("DOMContentLoaded", tryPatch);
+  } else {
+    tryPatch();
+  }
+
+  window.__v24Rebuild = buildRealTable;
 })();
-/* ===== end v24 items horizontal rows ===== */
+/* ===== end v24 ===== */
+
 </script>
-
-<style>
-/* ===== v24 ITEMS HORIZONTAL ROWS CSS - PDF ONLY ===== */
-#reportPage .items-table tr.ts-v24-hidden-original{display:none!important;}
-#reportPage .items-table tr.ts-v24-item-row td{
-  height:auto!important;min-height:34px!important;padding:6px 7px!important;border:2px solid #000!important;
-  vertical-align:middle!important;font-weight:bold!important;color:#000!important;background:#fff!important;
-  white-space:normal!important;word-break:break-word!important;overflow-wrap:anywhere!important;text-align:center!important;overflow:hidden!important;
-}
-#reportPage .items-table tr.ts-v24-item-row .ts-v24-desc{text-align:left!important;}
-#reportPage .items-table tr.ts-v24-filler-row td{height:180px;border:2px solid #000!important;border-top:none!important;background:#fff!important;padding:0!important;}
-#reportPage .items-table th.qty,#reportPage .items-table .ts-v24-qty{width:15%!important;}
-#reportPage .items-table th.desc,#reportPage .items-table .ts-v24-desc{width:33%!important;}
-#reportPage .items-table th.part,#reportPage .items-table .ts-v24-part{width:19%!important;}
-#reportPage .items-table th.manual,#reportPage .items-table .ts-v24-manual{width:17%!important;}
-#reportPage .items-table th.serial,#reportPage .items-table .ts-v24-serial{width:16%!important;}
-/* ===== end v24 css ===== */
-</style>
-
 </body></html>
